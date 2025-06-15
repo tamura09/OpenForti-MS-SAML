@@ -31,6 +31,8 @@ This repository contains two scripts to automate VPN login for SSL-VPN using SAM
     npm install puppeteer otplib timers
     ```
 
+
+
 ## 🛠️ Configuration
 
 ### Set environment variables
@@ -52,6 +54,21 @@ In `login_and_get_cookie.js`, locate the following line:
 await page.goto("https://{Replace the URL below with your actual SAML login start URL}/remote/saml/start?redirect=1", {
 waitUntil: "networkidle2"
 });
+```
+
+In the `script.sh` file, update the following line to match your institution’s VPN gateway and port number:
+```sh
+# Replace the VPN server address and port with your own
+echo "$cookie" | sudo openfortivpn {Replace the URL below with your actual SAML login start URL}:{your_port} \
+  --cookie-on-stdin -u "" -p "" \
+  | tee -a "$LOGFILE"
+```
+
+**For example**, if your VPN server is example.jp and uses port 443, it should look like this:
+```sh
+echo "$cookie" | sudo openfortivpn example.jp:443 \
+  --cookie-on-stdin -u "" -p "" \
+  | tee -a "$LOGFILE"
 ```
 
 ## ▶️ Usage
