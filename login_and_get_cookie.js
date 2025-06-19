@@ -6,9 +6,11 @@ const { setTimeout } = require("timers/promises");
   const USERNAME = process.env.SVPN_USER;
   const PASSWORD = process.env.SVPN_PASS;
   const TOTP_SECRET = process.env.TOTP_SECRET;
+  const VPN_GW = process.env.VPN_GW;
+  const VPN_PORT = process.env.VPN_PORT;
 
   const browser = await puppeteer.launch({
-    headless: "new",
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"]
   });
   const page = await browser.newPage();
@@ -18,10 +20,9 @@ const { setTimeout } = require("timers/promises");
   );
   await page.setExtraHTTPHeaders({ "Accept-Language": "ja-JP,ja;q=0.9" });
 
-// TODO: Replace the URL below with your actual SAML login start URL
-await page.goto("https://{Replace the URL below with your actual SAML login start URL}/remote/saml/start?redirect=1", {
-  waitUntil: "networkidle2"
-});
+  await page.goto("https://"+VPN_GW+":"+VPN_PORT+"/remote/saml/start?redirect=1", {
+    waitUntil: "networkidle2"
+  });
 
   await page.waitForSelector("#i0116", { timeout: 15000 });
   await page.type("#i0116", USERNAME);

@@ -4,29 +4,26 @@
 export SVPN_USER="your_username"  # Replace with your actual username
 export SVPN_PASS="your_passwd"    # Replace with your actual password
 export TOTP_SECRET="your_totp_secret"  # TOTP secret key
-
-# log file path
-LOGFILE="$HOME/vpn.log"
+export VPN_GW="your_vpn_gateway" # Replace with your actual VPN gateway
+export VPN_PORT="your_vpn_gateway_port" # Replace with your actual VPN port
 
 # Get directory of the current script (for referencing the JS file in the same directory)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # loop to get the cookie and connect to VPN
-while true; do
-  echo "[$(date)] Getting SVPN cookie..." | tee -a "$LOGFILE"
+logger -t OpenFortiVPN "Getting SVPN cookie..."
 
+# loop to get the cookie and connect to VPN
+while true; do
   cookie=$(node "$SCRIPT_DIR/login_and_get_cookie.js")
   if [[ "$cookie" == SVPNCOOKIE=* ]]; then
-    echo "[$(date)] Cookie acquired. Connecting VPN..." | tee -a "$LOGFILE"
-
-    echo "$cookie" | sudo openfortivpn {Replace the URL below with your actual SAML login start URL}:{your_port} \
-      --cookie-on-stdin -u "" -p "" \
-      | tee -a "$LOGFILE"
-    
-    echo "[$(date)] VPN disconnected. Retrying in 10 seconds..." | tee -a "$LOGFILE"
-    sleep 10
+    logger -t OpenFortiVPN "Cookie acquired. Connecting VPN..."
+    echo "[$(date)] Cookie acquired. Connecting VPN..."
+    echo "$cookie" | sudo openfortivpn "$VPN_GW":"$VPN_PORT"/remote/saml/start --cookie-on-stdin | logger -t OpenFortiVPN
+    logger -t OpenFortiVPN "VPN disconnected."
+    echo "[$(date)] VPN disconnected."
   else
-    echo "[$(date)] Failed to get cookie. Retrying in 10 seconds..." | tee -a "$LOGFILE"
-    sleep 10
+    logger -t OpenFortiVPN "Failed to get cookie."
+    echo "[$(date)] Failed to get cookie."
   fi
 done
