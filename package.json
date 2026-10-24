@@ -1,0 +1,16 @@
+{
+  "name": "openforti-ms-saml",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Forti VPN SAML login helper",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "check": "node --check login_and_get_cookie.js"
+  },
+  "dependencies": {
+    "otplib": "12.0.1",
+    "puppeteer": "24.43.1"
+  }
+}

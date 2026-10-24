@@ -28,8 +28,12 @@ This repository contains two scripts to automate VPN login for SSL-VPN using SAM
     From the directory where login_and_get_cookie.js is located:
 
     ```bash
-    npm install puppeteer otplib timers
+    npm ci
     ```
+
+Dependencies are declared in `package.json` and locked in `package-lock.json`. Renovate opens dependency update PRs. `timers/promises` is built into Node.js and does not require an npm package.
+
+The script uses the otplib v12 `authenticator` API; upgrading to v13 requires an API migration. Puppeteer v25 requires Node.js 22.12 or newer, so the initial dependency version remains on v24 to preserve the documented Node.js 18 requirement. Major upgrades are reviewed separately.
 
 ## 🛠️ Configuration
 
