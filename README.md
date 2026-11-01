@@ -35,6 +35,8 @@ Dependencies are declared in `package.json` and locked in `package-lock.json`. R
 
 The script uses otplib v13's asynchronous `generate({ secret })` API and Puppeteer v25. TOTP secrets are Base32 encoded and must decode to at least 16 bytes (128 bits); shorter legacy secrets must be re-enrolled with the identity provider before use.
 
+The login helper validates the TOTP secret before opening a browser or submitting credentials, and closes the browser on login errors. The shell wrapper waits 30 seconds after a failed login or VPN disconnection before retrying.
+
 Run `npm run check` and `npm test` to validate syntax and the dependency APIs, including known TOTP test vectors, without logging in. To use an existing Chrome/Chromium installation, set `PUPPETEER_EXECUTABLE_PATH` to its executable path; `PUPPETEER_SKIP_DOWNLOAD=true npm ci` skips the bundled browser download.
 
 ## 🛠️ Configuration

@@ -15,8 +15,7 @@ logger -t OpenFortiVPN "Getting SVPN cookie..."
 
 # loop to get the cookie and connect to VPN
 while true; do
-  cookie=$(node "$SCRIPT_DIR/login_and_get_cookie.js")
-  if [[ "$cookie" == SVPNCOOKIE=* ]]; then
+  if cookie=$(node "$SCRIPT_DIR/login_and_get_cookie.js") && [[ "$cookie" == SVPNCOOKIE=* ]]; then
     logger -t OpenFortiVPN "Cookie acquired. Connecting VPN..."
     echo "[$(date)] Cookie acquired. Connecting VPN..."
     echo "$cookie" | sudo openfortivpn "$VPN_GW":"$VPN_PORT"/remote/saml/start --cookie-on-stdin | logger -t OpenFortiVPN
@@ -26,4 +25,6 @@ while true; do
     logger -t OpenFortiVPN "Failed to get cookie."
     echo "[$(date)] Failed to get cookie."
   fi
+  # Back off after failed login or disconnection to avoid rapid authentication retries.
+  sleep 30
 done
