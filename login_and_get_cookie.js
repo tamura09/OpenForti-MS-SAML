@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const { authenticator } = require("otplib");
+const { generate } = require("otplib");
 const { setTimeout } = require("timers/promises");
 
 (async () => {
@@ -51,7 +51,7 @@ const { setTimeout } = require("timers/promises");
     process.exit(1);
   }
 
-  const otp = authenticator.generate(TOTP_SECRET);
+  const otp = await generate({ secret: TOTP_SECRET });
   await otpFrame.type("#idTxtBx_SAOTCC_OTC", otp);
   await setTimeout(600)
   await page.keyboard.press("Enter");
