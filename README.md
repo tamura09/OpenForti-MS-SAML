@@ -11,7 +11,7 @@ This repository contains two scripts to automate VPN login for SSL-VPN using SAM
 
 ## 🔧 Requirements
 
-- Node.js (v18+ recommended)
+- Node.js 22.12 or newer (Node.js 24 LTS recommended)
 - `openfortivpn`
 - A valid TOTP secret key
 - Your SAML login credentials (username and password)
@@ -33,7 +33,11 @@ This repository contains two scripts to automate VPN login for SSL-VPN using SAM
 
 Dependencies are declared in `package.json` and locked in `package-lock.json`. Renovate opens dependency update PRs. `timers/promises` is built into Node.js and does not require an npm package.
 
-The script uses the otplib v12 `authenticator` API; upgrading to v13 requires an API migration. Puppeteer v25 requires Node.js 22.12 or newer, so the initial dependency version remains on v24 to preserve the documented Node.js 18 requirement. Major upgrades are reviewed separately.
+The script uses otplib v13's asynchronous `generate({ secret })` API and Puppeteer v25. TOTP secrets are Base32 encoded and must decode to at least 16 bytes (128 bits); shorter legacy secrets must be re-enrolled with the identity provider before use.
+
+The login helper validates the TOTP secret before opening a browser or submitting credentials, and closes the browser on login errors. The shell wrapper waits 30 seconds after a failed login or VPN disconnection before retrying.
+
+Run `npm run check` and `npm test` to validate syntax and the dependency APIs, including known TOTP test vectors, without logging in. To use an existing Chrome/Chromium installation, set `PUPPETEER_EXECUTABLE_PATH` to its executable path; `PUPPETEER_SKIP_DOWNLOAD=true npm ci` skips the bundled browser download.
 
 ## 🛠️ Configuration
 
